@@ -9,11 +9,12 @@ import Boid from './boid.js';
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 const renderer = new THREE.WebGLRenderer(); 
-const NUMBER_OF_BOIDS = 200
-const boids = []; // Array to hold the boids
+const NUMBER_OF_BOIDS = 1200;
+const boids = [];
 
-
-/**================== SCENE SETUP ================== */
+/*==================================================
+=            INITIALIZE SCENE AND CAMERA           =
+==================================================*/
 camera.position.z = 10;
 const backgroundColor = new THREE.Color( 'skyblue' );
 scene.background = backgroundColor;
@@ -41,7 +42,9 @@ controls.screenSpacePanning = false;
 controls.maxPolarAngle = Math.PI / 2; // Limit vertical rotation
 
 
-/**================== SETUP OBJECTS IN SCENE ================== */
+/*==================================================
+=            SETUP OBJECTS IN SCENE SETUP          =
+==================================================*/
 //Create cube geometry that defines the shape and structure of a 3D object (cube)
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
 
@@ -58,17 +61,20 @@ for (let i = 0; i < NUMBER_OF_BOIDS; i++) {
     const x = Math.random() * 10 - 5;
     const y = Math.random() * 10 - 5;
     const z = Math.random() * 10 - 5;
-    const boid = new Boid(x, y, z, scene, isDebugBoid);
+    const boid = new Boid(x, y, 0, scene, isDebugBoid);
     boids.push(boid);
 }
 
-/**================== METHODS ================== */
+/*==================================================
+=                      METHODS                     =
+==================================================*/
 // Update renderer size on window resize
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
 //To call the boids update function every frame
 function updateBoids() {
     for (let i = 0; i < boids.length; i++) {
@@ -84,5 +90,7 @@ function animate() {
 }
 
 
-/**================== LOGIC ================== */
+/*==================================================
+=                        LOGIC                     =
+==================================================*/
 animate();
