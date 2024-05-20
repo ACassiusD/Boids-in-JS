@@ -2,34 +2,35 @@ import * as THREE from 'three';
 import Util from './util';
 
 const MAX_SPEED = 0.0009;
-const MAX_FORCE = 0.1;
+const MAX_FORCE = 0.2;
 const util = new Util(); //Util object
+const PERCEPTION_RADIUS = 2;  //The radius of how many other boids we can detect around us
 
 class Boid {
-    constructor(x, y, z, scene) {
-        //Set given inital position and random velocity 
+    constructor(x, y, z, scene, debug = false) {
+        this.isDebugBoid = debug;
         this.position = new THREE.Vector3(x, y, z);
-        this.velocity = this.generateRandomVelocity();
-        
-        //Set more class properties
+        this.velocity = util.generateRandomVelocity();
         this.acceleration = new THREE.Vector3();
         this.maxSpeed = MAX_SPEED;
         this.maxForce = MAX_FORCE; 
 
-        //For well-structured Three.js apps, it's common to encapsulate the behavior and appearance of an object within its class.
-        //So it is approriate for it to add itself to the scene and create its mesh with the three library.
+        //Create the boids mesh, set the material and add it to the scene.
         const geometry = new THREE.ConeGeometry(0.1, 0.25, 16);
-        // const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-        const material = new THREE.MeshStandardMaterial({ color: `#${util.getRandomColor()}` });
-
+        const material = util.getRandomColorMaterial();
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.position.copy(this.position);
-        scene.add(this.mesh); // Add boid mesh to the scene
-    }
-    getRandomColor() {
-        return Math.floor(Math.random() * 16777215).toString(16);
-    }    
+        scene.add(this.mesh); 
 
+        if(this.isDebugBoid){
+            //Create Perseption radius mesh and add it to the scene
+            const SphereGeometry = new THREE.SphereGeometry(PERCEPTION_RADIUS)
+            this.perseptionMesh = new THREE.Mesh(SphereGeometry, util.RED_TRANSPARENT_MATERIAL);
+            this.perseptionMesh.position.copy(this.position);
+            scene.add(this.perseptionMesh);
+        }
+    }
+    
     update() {
         this.velocity.clampLength(0, this.maxSpeed); // Limit the speed
         this.position.add(this.velocity);
@@ -43,20 +44,24 @@ class Boid {
         this.mesh.setRotationFromQuaternion(quaternion);
 
         this.mesh.position.copy(this.position);
+        
+        if(this.isDebugBoid){
+            this.perseptionMesh.position.copy(this.position);
+        }
+    }
+
+    calculateSeperationForce(){
+        //A sphere how much we can see 
+        //Get all nerby boids 
+        //For each nearby boid 
+            //Calculate the direction to the boid 
+            //Create a force in the opposite direction
+            //Add it to the total force
+        //Return the total force
     }
 
     applyForce(force) {
         this.acceleration.add(force); // Change acceleration based on applied force
-    }
-
-    // Generates a new vector with the x, y, z components set to random values between -1 and 1.
-    // This is used to initialize the boid's velocity with a random direction and magnitude.
-    generateRandomVelocity() {
-        return new THREE.Vector3(
-            Math.random() * 2 - 1, // x component: random value between -1 and 1
-            Math.random() * 2 - 1, 
-            Math.random() * 2 - 1  
-        );
     }
 }
 

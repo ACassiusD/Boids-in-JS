@@ -9,7 +9,7 @@ import Boid from './boid.js';
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 const renderer = new THREE.WebGLRenderer(); 
-const NUMBER_OF_BOIDS = 1500
+const NUMBER_OF_BOIDS = 200
 const boids = []; // Array to hold the boids
 
 
@@ -41,7 +41,7 @@ controls.screenSpacePanning = false;
 controls.maxPolarAngle = Math.PI / 2; // Limit vertical rotation
 
 
-/**================== CREATING OBJECTS FOR SCENE ================== */
+/**================== SETUP OBJECTS IN SCENE ================== */
 //Create cube geometry that defines the shape and structure of a 3D object (cube)
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
 
@@ -52,12 +52,15 @@ const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 }); //Black un
 const cube = new THREE.Mesh( geometry, material );
 scene.add( cube ); //Default position 0,0,0
 
-// Create boid objects and add them to the scene
+// Spawn many normal boid objects and a single debug boid to the scene
 for (let i = 0; i < NUMBER_OF_BOIDS; i++) {
-    const boid = new Boid(Math.random() * 10 - 5,Math.random() * 10 - 5, Math.random() * 10 - 5, scene);
+    const isDebugBoid = (i === NUMBER_OF_BOIDS - 1);
+    const x = Math.random() * 10 - 5;
+    const y = Math.random() * 10 - 5;
+    const z = Math.random() * 10 - 5;
+    const boid = new Boid(x, y, z, scene, isDebugBoid);
     boids.push(boid);
 }
-
 
 /**================== METHODS ================== */
 // Update renderer size on window resize
@@ -80,4 +83,6 @@ function animate() {
     renderer.render( scene, camera );
 }
 
+
+/**================== LOGIC ================== */
 animate();
