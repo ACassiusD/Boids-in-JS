@@ -9,12 +9,12 @@ import Boid from './boid.js';
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 const renderer = new THREE.WebGLRenderer(); 
-const NUMBER_OF_BOIDS = 1200;
+const NUMBER_OF_BOIDS = 150;
 const boids = [];
 
 /*==================================================
-=            INITIALIZE SCENE AND CAMERA           =
-==================================================*/
+  =            INITIALIZE SCENE AND CAMERA         =
+  ==================================================*/
 camera.position.z = 10;
 const backgroundColor = new THREE.Color( 'skyblue' );
 scene.background = backgroundColor;
