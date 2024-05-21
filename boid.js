@@ -11,6 +11,7 @@ const AVOID_FACTOR = 0.05;
 const DRAW_VISUAL_RADIUS = true;
 const DRAW_AVOID_RADIUS = true;
 const DRAW_SEPERATION_VECTOR = true;
+const DRAW_IN_RANGE_LINES = true;
 
 class Boid {
     static allBoids = []; //holds all boid instances
@@ -147,7 +148,7 @@ class Boid {
 
     //Draw a debug line from this boid to the other boid
     createDebugLineToBoid( otherBoid) {
-        if(this.isDebugBoid){
+        if(this.isDebugBoid && DRAW_IN_RANGE_LINES == true){
             const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
             const geometry = new THREE.BufferGeometry().setFromPoints([
                 this.position,

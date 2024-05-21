@@ -1,15 +1,15 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';//For draggable camera
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; //For draggable camera
 import Boid from './boid.js';
 
-//Javascript Bookmarklet for FPS counter. https://github.com/mrdoob/stats.js
+//Javascript Bookmarklet for top left FPS counter - https://github.com/mrdoob/stats.js
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
 //Instantiate needed objects and constants for the scene.
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 const renderer = new THREE.WebGLRenderer(); 
-const NUMBER_OF_BOIDS = 150;
+const NUMBER_OF_BOIDS = 200;
 const boids = [];
 
 /*==================================================
