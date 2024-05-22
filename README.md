@@ -10,4 +10,4 @@ Added Visual radius and first logical rule for boids, Seperation, limiting movem
 Visualization of the seperation vector based on nearby boids
 ![image](https://github.com/ACassiusD/Boids-in-JS/assets/18119577/f229c9cd-7c8a-4ddc-9abd-e09c1c4456da)
 Added a console for debugging and behavior to avoid boundaries to stay within the screen size.
-![image](https://github.com/ACassiusD/Boids-in-JS/assets/18119577/482b821c-183b-4b11-81e2-255b80c7ad5f)
+[makewebm.webm](https://github.com/ACassiusD/Boids-in-JS/assets/18119577/7a339a96-030c-4a00-9338-18e446316710)
