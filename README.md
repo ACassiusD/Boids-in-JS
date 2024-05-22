@@ -9,3 +9,5 @@ Added Visual radius and first logical rule for boids, Seperation, limiting movem
 ![image](https://github.com/ACassiusD/Boids-in-JS/assets/18119577/d27e1324-6a48-4234-b8ed-3290f1f39671)
 Visualization of the seperation vector based on nearby boids
 ![image](https://github.com/ACassiusD/Boids-in-JS/assets/18119577/f229c9cd-7c8a-4ddc-9abd-e09c1c4456da)
+Added a console for debugging and behavior to avoid boundaries to stay within the screen size.
+![image](https://github.com/ACassiusD/Boids-in-JS/assets/18119577/482b821c-183b-4b11-81e2-255b80c7ad5f)
