@@ -2,30 +2,38 @@ import * as THREE from 'three';
 import Util from './util';
 
 const util = new Util();
-const MAX_SPEED = 0.001;
-const MIN_SPEED = 0.000005;
+const MAX_SPEED = 0.09;
+const MIN_SPEED = 0.009;
 const VISUAL_RADIUS = 2;  //The radius of how many other boids we can detect around us
 const PROTECTED_RADIUS = 1;
-const AVOID_FACTOR = 0.05;
+const AVOID_FACTOR = 0.003;
+const TURN_FACTOR = 0.005;
 
+//Debugging
 const DRAW_VISUAL_RADIUS = true;
 const DRAW_AVOID_RADIUS = true;
 const DRAW_SEPERATION_VECTOR = true;
 const DRAW_IN_RANGE_LINES = true;
+const CONSOLE = document.getElementById('label');
+
+//Wall boundaries 
+const TOP_Y_BOUNDARY = 8;
+const BOTTOM_Y_BOUNDARY = -8;
+const LEFT_X_BOUNDARY = -8;
+const RIGHT_X_BOUNDARY = 8;
 
 class Boid {
     static allBoids = []; //holds all boid instances
 
-    constructor(x, y, z, scene, debug = false) {
+    constructor(x, y, z, scene, isDebugBoid = false) {
         this.debugLines = [];
-        this.isDebugBoid = debug; //For determining wheater to display debug visuals and logs 
-        this.scene = scene;
+        this.isDebugBoid = isDebugBoid; //For determining wheater to display debug visuals and logs 
+        this.scene = scene; //TODO: Dont store a new scene object for every boid
 
         // Set movement Properties
         this.position = new THREE.Vector3(x, y, z);
         this.velocity = util.generateRandomVelocity2D();
         this.acceleration = new THREE.Vector3(); //For gratual steering towards a desired vector rather than instant changes in the velocity.
-        this.maxSpeed = MAX_SPEED;
         
         //Meshes 
         this.avoidRadiusMesh = null
@@ -52,17 +60,20 @@ class Boid {
     
     //Logic to run each frame
     update() {
-        //Accumulate the accelleration of the 3 rules
+        this.clearDebugLineArray();
+           
         this.applyForce(this.getSeperationForce());
-        //this.applyForce(this.getSeperationForce()); rule2
-        //this.applyForce(this.getSeperationForce()); rule3
-        
-        //Update the velocity based on the forces from the 3 rules
-        this.velocity.add(this.acceleration);  
-        this.velocity.clampLength(0, this.maxSpeed);
 
-        //Update the position based on the velocity.
-        this.position.add(this.velocity);
+        this.velocity.add(this.acceleration);  
+
+        //Avoid Walls
+        this.AvoidEdges();
+
+        //Limit the max speed.
+        this.velocity.clampLength(MIN_SPEED, MAX_SPEED);
+
+        //Update the position based on the velocity
+        this.position.add(this.velocity.clone());
 
         //Update mesh position and rotation.
         const direction = this.velocity.clone().normalize();
@@ -74,6 +85,10 @@ class Boid {
         //Display debugger visuals if this is a debug boid.
         this.updateDebugLines();
         this.updateDebugMeshPositions();
+        this.updateConsoleText();
+
+        // //Sets acceleration vector to (0,0,0), without this the acceleration accumulates 
+        this.acceleration.multiplyScalar(0); 
     }
 
     /**
@@ -90,7 +105,6 @@ class Boid {
      * @return targetVector - The vector that should be applied to move the boid away from others.
      */
     getSeperationForce() {
-        this.clearDebugLineArray();
         let count = 0;
     
         // The accumulated separation vector
@@ -127,6 +141,40 @@ class Boid {
 
         return targetVector;
     }
+
+
+    // # If the boid is near an edge, make it turn by turnfactor
+    AvoidEdges(){
+        // Check top margin
+        if (this.position.y > TOP_Y_BOUNDARY) {
+            this.velocity.y -= TURN_FACTOR;
+            if(this.isDebugBoid){
+                console.log("too high");
+            }
+        }
+        // Check bottom margin
+        if (this.position.y < BOTTOM_Y_BOUNDARY) {
+            this.velocity.y += TURN_FACTOR;
+            if(this.isDebugBoid){
+                console.log("too low");
+            }
+        }
+        // Check right margin
+        if (this.position.x > RIGHT_X_BOUNDARY) {
+            this.velocity.x -= TURN_FACTOR;
+            if(this.isDebugBoid){
+                console.log("too right");
+            }
+        }
+        // Check left margin
+        if (this.position.x < LEFT_X_BOUNDARY) {
+            this.velocity.x += TURN_FACTOR;
+            if(this.isDebugBoid){
+                console.log("too left");
+            }
+        }
+    }
+    
 
     // Create a line to visualize the direction of the boid
     createDebugLine() {
@@ -255,6 +303,12 @@ class Boid {
     //Adds force to accelleration variable.
     applyForce(force) {
         this.acceleration.add(force);
+    }
+    
+    updateConsoleText(){
+        CONSOLE.innerText = `Acceleration = (${this.acceleration.x.toFixed(4)}, ${this.acceleration.y.toFixed(4)}, ${this.acceleration.z.toFixed(4)})
+        Velocity = (${this.velocity.x.toFixed(4)}, ${this.velocity.y.toFixed(4)}, ${this.velocity.z.toFixed(4)})
+        Position = (${this.position.x.toFixed(4)}, ${this.position.y.toFixed(4)}, ${this.position.z.toFixed(4)})`;
     }
 }
 

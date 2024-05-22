@@ -9,8 +9,9 @@ import Boid from './boid.js';
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 const renderer = new THREE.WebGLRenderer(); 
-const NUMBER_OF_BOIDS = 200;
+const NUMBER_OF_BOIDS = 160;
 const boids = [];
+const cubes = [];
 
 /*==================================================
   =            INITIALIZE SCENE AND CAMERA         =
@@ -45,15 +46,8 @@ controls.maxPolarAngle = Math.PI / 2; // Limit vertical rotation
 /*==================================================
 =            SETUP OBJECTS IN SCENE SETUP          =
 ==================================================*/
-//Create cube geometry that defines the shape and structure of a 3D object (cube)
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
 
-// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 }); //Not effected by lighting.
-const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 }); //Black unless light is illuminating it.
-
-//Create a mesh from the cube and add it to the scene and apply a material.
-const cube = new THREE.Mesh( geometry, material );
-scene.add( cube ); //Default position 0,0,0
+spawnCubes();
 
 // Spawn many normal boid objects and a single debug boid to the scene
 for (let i = 0; i < NUMBER_OF_BOIDS; i++) {
@@ -83,14 +77,44 @@ function updateBoids() {
 }
 function animate() {
     requestAnimationFrame( animate );
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
+    AnimateCubes();
     updateBoids(); // Update boids
     renderer.render( scene, camera );
 }
 
+function positionTextBox() {
+    const label = document.getElementById('label');
+    label.style.transform = `translate(0, 0) translate(${window.innerWidth-300}px, ${0}px)`;
+}
+function spawnCubes(){
+    //Create a mesh from the cube and add it to the scene and apply a material.
+    //Create cube geometry that defines the shape and structure of a 3D object (cube)
+    const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 }); //Black unless light is illuminating it.
+    const cubeTop = new THREE.Mesh(geometry, material);
+    const cubeBottom = new THREE.Mesh(geometry, material);
+    const cubeLeft = new THREE.Mesh(geometry, material);
+    const cubeRight = new THREE.Mesh(geometry, material);
+    // const cubeRight = new THREE.Mesh(geometry, material);
+    cubes.push(cubeTop, cubeBottom, cubeLeft, cubeRight);
+    for (let cube of cubes) {
+        scene.add(cube);
+    }
+    cubeTop.position.set(0,8,0)
+    cubeBottom.position.set(0,-8,0)
+    cubeLeft.position.set(-8,-0,0)
+    cubeRight.position.set(8,0,0)
+}
+
+function AnimateCubes(){
+    for (let cube of cubes) {
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+    }
+}
 
 /*==================================================
 =                        LOGIC                     =
 ==================================================*/
+positionTextBox();
 animate();
